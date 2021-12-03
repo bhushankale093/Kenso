@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "305741228708",
+    "project_id": "kenso-1d4fa",
+    "storage_bucket": "kenso-1d4fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305741228708:android:c2dc90045eb5da53451431",
+        "android_client_info": {
+          "package_name": "com.bhushan.kenso"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305741228708-h4b6fkfmcaffpsjd3e6dlihjfonhplas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmPl8qwHG9TgeM2u782QYqIrMZn6axy8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305741228708-h4b6fkfmcaffpsjd3e6dlihjfonhplas.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
