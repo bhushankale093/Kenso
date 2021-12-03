@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class Home extends StatefulWidget {
   @override
@@ -11,11 +14,53 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isAuth = false;
+  @override
+  void initState() {
+    super.initState();
+    // Detects when user signed in
+    googleSignIn.onCurrentUserChanged.listen((account) {
+      handleSignIn(account);
+    }, onError: (err) {
+      print('Error signing in: $err');
+    });
+    // Reauthenticate user when app is opened
+    googleSignIn.signInSilently(suppressErrors: false).then((account) {
+      handleSignIn(account);
+    }).catchError((err) {
+      print('Error signing in: $err');
+    });
+  }
+
+  handleSignIn(GoogleSignInAccount account) {
+    if (account != null) {
+      print('user signed in');
+      setState(() {
+        isAuth = true;
+      });
+    } else {
+      setState(() {
+        isAuth = false;
+      });
+    }
+  }
 
   Scaffold authScreen() {
     return Scaffold(
-      body: Text('Authorised User'),
+      body: Center(
+        child: RaisedButton(
+          child: Text('Logout'),
+          onPressed: logout,
+        ),
+      ),
     );
+  }
+
+  login() {
+    googleSignIn.signIn();
+  }
+
+  logout() {
+    googleSignIn.signOut();
   }
 
   Scaffold unAuthScreen() {
@@ -36,7 +81,7 @@ class _HomeState extends State<Home> {
               ),
             ),
             GestureDetector(
-              onTap: () => print('clicked'),
+              onTap: login,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 60.0),
                 child: Container(
