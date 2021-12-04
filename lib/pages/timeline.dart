@@ -11,7 +11,7 @@ class _TimelineState extends State<Timeline> {
   Widget build(context) {
     return Scaffold(
       appBar: header(context, isAppTitle: true),
-      body: Text("Timeline"),
+      body: Center(child: Text("Timeline")),
     );
   }
 }
