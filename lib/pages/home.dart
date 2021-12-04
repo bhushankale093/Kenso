@@ -1,9 +1,16 @@
 import 'dart:io';
 
+import 'package:circle_bottom_navigation/circle_bottom_navigation.dart';
+import 'package:circle_bottom_navigation/widgets/tab_data.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kenso/pages/activityFeed.dart';
+import 'package:kenso/pages/profile.dart';
+import 'package:kenso/pages/search.dart';
+import 'package:kenso/pages/timeline.dart';
+import 'package:kenso/pages/upload.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -14,9 +21,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isAuth = false;
+  late PageController pageController;
+  int pageIndex = 0;
   @override
   void initState() {
     super.initState();
+    pageController = PageController();
     // Detects when user signed in
     googleSignIn.onCurrentUserChanged.listen((account) {
       handleSignIn(account);
@@ -44,14 +54,48 @@ class _HomeState extends State<Home> {
     }
   }
 
+  onPageChanged(int pageIndex) {
+    setState(() {
+      this.pageIndex = pageIndex;
+    });
+  }
+
+  onTap(int pageIndex) {
+    pageController.animateToPage(
+      pageIndex,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   Scaffold authScreen() {
     return Scaffold(
-      body: Center(
-        child: RaisedButton(
-          child: Text('Logout'),
-          onPressed: logout,
-        ),
+      body: PageView(
+        children: <Widget>[
+          Timeline(),
+          ActivityFeed(),
+          Upload(),
+          Search(),
+          Profile(),
+        ],
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: NeverScrollableScrollPhysics(),
       ),
+      bottomNavigationBar: CircleBottomNavigation(
+          initialSelection: pageIndex,
+          onTabChangedListener: onTap,
+          barBackgroundColor: Colors.white,
+          circleColor: Colors.purpleAccent,
+          inactiveIconColor: Colors.purple,
+          // activeColor: Theme.of(context).primaryColor,
+          tabs: [
+            TabData(icon: Icons.whatshot),
+            TabData(icon: Icons.notifications_active),
+            TabData(icon: Icons.photo_camera),
+            TabData(icon: Icons.search),
+            TabData(icon: Icons.account_circle),
+          ]),
     );
   }
 
