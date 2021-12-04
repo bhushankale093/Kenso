@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
     pageController.animateToPage(
       pageIndex,
       duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      curve: Curves.bounceInOut,
     );
   }
 
