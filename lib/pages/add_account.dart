@@ -10,15 +10,15 @@ class AddAccount extends StatefulWidget {
 class _AddAccountState extends State<AddAccount> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  late String username;
+  String username;
 
   submit() {
     final form = _formKey.currentState;
 
-    if (form!.validate()) {
+    if (form.validate()) {
       form.save();
       SnackBar snackbar = SnackBar(content: Text("Welcome $username!"));
-      _scaffoldKey.currentState!.showSnackBar(snackbar);
+      _scaffoldKey.currentState.showSnackBar(snackbar);
       Timer(Duration(seconds: 2), () {
         Navigator.pop(context, username);
       });
@@ -53,7 +53,7 @@ class _AddAccountState extends State<AddAccount> {
                       autovalidate: true,
                       child: TextFormField(
                         validator: (val) {
-                          if (val!.trim().length < 3 || val!.isEmpty) {
+                          if (val.trim().length < 3 || val.isEmpty) {
                             return "Username too short";
                           } else if (val.trim().length > 12) {
                             return "Username too long";
@@ -61,7 +61,7 @@ class _AddAccountState extends State<AddAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => username = val!,
+                        onSaved: (val) => username = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Username",

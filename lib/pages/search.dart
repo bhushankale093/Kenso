@@ -12,14 +12,30 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+  TextEditingController searchController = TextEditingController();
+  Future<QuerySnapshot> searchResultsFuture;
+
+  handleSearch(String query) {
+    Future<QuerySnapshot> users =
+        usersRef.where("displayName", isGreaterThanOrEqualTo: query).get();
+    setState(() {
+      searchResultsFuture = users;
+    });
+  }
+
+  clearSearch() {
+    searchController.clear();
+  }
+
   AppBar buildSearchField() {
     return AppBar(
       backgroundColor: Colors.purple,
       title: TextFormField(
+        controller: searchController,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
           hintText: "Search for a user...",
-          hintStyle: Theme.of(context).textTheme.caption!.copyWith(
+          hintStyle: Theme.of(context).textTheme.caption.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: Colors.white70,
@@ -32,10 +48,11 @@ class _SearchState extends State<Search> {
           ),
           suffixIcon: IconButton(
             icon: Icon(Icons.clear),
-            onPressed: null,
+            onPressed: clearSearch,
             color: Colors.white,
           ),
         ),
+        onFieldSubmitted: handleSearch,
       ),
     );
   }
@@ -60,12 +77,77 @@ class _SearchState extends State<Search> {
     );
   }
 
+  buildSearchResults() {
+    return FutureBuilder<QuerySnapshot>(
+      future: searchResultsFuture,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return circularProgress();
+        }
+        List<UserResult> searchResults = [];
+        snapshot.data.docs.forEach((doc) {
+          AppUser user = AppUser.fromDocument(doc);
+          UserResult searchResult = UserResult(user);
+          searchResults.add(searchResult);
+        });
+        return ListView(
+          children: searchResults,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.orange,
       appBar: buildSearchField(),
-      body: buildNoContent(),
+      body:
+          searchResultsFuture == null ? buildNoContent() : buildSearchResults(),
+    );
+  }
+}
+
+class UserResult extends StatelessWidget {
+  final AppUser user;
+  UserResult(this.user);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 2.5),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.purple,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          children: <Widget>[
+            GestureDetector(
+              onTap: null,
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  backgroundImage: AssetImage('assets/images/defaultUser.png'),
+                ),
+                title: Text(
+                  user?.displayName ?? '',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  user?.username ?? '',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            Divider(
+              height: 2.0,
+              color: Colors.white54,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

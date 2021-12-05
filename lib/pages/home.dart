@@ -17,7 +17,7 @@ import 'package:kenso/pages/upload.dart';
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final usersRef = FirebaseFirestore.instance.collection('users');
 final DateTime timestamp = DateTime.now();
-late AppUser currentUser;
+AppUser currentUser;
 
 class Home extends StatefulWidget {
   @override
@@ -26,7 +26,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isAuth = false;
-  late PageController pageController;
+  PageController pageController;
   int pageIndex = 0;
   @override
   void initState() {
