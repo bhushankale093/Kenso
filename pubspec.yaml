@@ -19,6 +19,7 @@ dependencies:
   firebase_core : ^0.5.2
   circle_bottom_navigation: ^1.0.6
   cloud_firestore: ^0.14.3
+  image_picker: ^0.6.0+2
 
 dev_dependencies:
   flutter_test:
