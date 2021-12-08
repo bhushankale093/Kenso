@@ -77,7 +77,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  buildSearchResults() {
+  searchResults() {
     return FutureBuilder<QuerySnapshot>(
       future: searchResultsFuture,
       builder: (context, snapshot) {
@@ -102,8 +102,7 @@ class _SearchState extends State<Search> {
     return Scaffold(
       backgroundColor: Colors.orange,
       appBar: buildSearchField(),
-      body:
-          searchResultsFuture == null ? buildNoContent() : buildSearchResults(),
+      body: searchResultsFuture == null ? buildNoContent() : searchResults(),
     );
   }
 }

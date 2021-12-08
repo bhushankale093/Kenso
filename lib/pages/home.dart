@@ -6,7 +6,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:kenso/models/appUser.dart';
+import 'package:kenso/models/AppUser.dart';
 import 'package:kenso/pages/activityFeed.dart';
 import 'package:kenso/pages/add_account.dart';
 import 'package:kenso/pages/profile.dart';
@@ -107,7 +107,7 @@ class _HomeState extends State<Home> {
             onPressed: logout,
           ),
           ActivityFeed(),
-          Upload(),
+          Upload(currentUser: currentUser),
           Search(),
           Profile(),
         ],

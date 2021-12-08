@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kenso/models/AppUser.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Upload extends StatefulWidget {
+  final AppUser currentUser;
+  Upload({this.currentUser});
   @override
   _UploadState createState() => _UploadState();
 }
@@ -23,7 +26,7 @@ class _UploadState extends State<Upload> {
     });
   }
 
-  handleChooseFromGallery() async {
+  chooseFromGallery() async {
     Navigator.pop(context);
     File file = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -42,7 +45,7 @@ class _UploadState extends State<Upload> {
                 child: Text("Photo with Camera"), onPressed: handleTakePhoto),
             SimpleDialogOption(
                 child: Text("Image from Gallery"),
-                onPressed: handleChooseFromGallery),
+                onPressed: chooseFromGallery),
             SimpleDialogOption(
               child: Text("Cancel"),
               onPressed: () => Navigator.pop(context),
@@ -53,7 +56,7 @@ class _UploadState extends State<Upload> {
     );
   }
 
-  Container buildSplashScreen() {
+  Container splashScreen() {
     return Container(
       color: Colors.orange,
       alignment: Alignment.center,
@@ -82,12 +85,128 @@ class _UploadState extends State<Upload> {
     );
   }
 
-  buildUploadForm() {
-    return Text('Uploaded');
+  clearImage() {
+    setState(() {
+      file = null;
+    });
+  }
+
+  Scaffold uploadForm() {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purple,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: clearImage),
+        title: Text(
+          "Caption Post",
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          FlatButton(
+            onPressed: null,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.purpleAccent,
+              ),
+              alignment: Alignment.center,
+              height: 40.0,
+              width: 70.0,
+              child: Text(
+                "Post",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: ListView(
+        children: <Widget>[
+          Container(
+            height: 220.0,
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: FileImage(file),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+          ),
+          ListTile(
+            leading: CircleAvatar(
+              backgroundImage: widget.currentUser.photoUrl != null
+                  ? NetworkImage(widget.currentUser.photoUrl)
+                  : null,
+            ),
+            title: Container(
+              width: 250.0,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Write a caption...",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(
+              Icons.pin_drop,
+              color: Colors.orange,
+              size: 35.0,
+            ),
+            title: Container(
+              width: 250.0,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Where was this photo taken?",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: 200.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: RaisedButton.icon(
+              label: Text(
+                "Use Current Location",
+                style: TextStyle(color: Colors.white),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              color: Colors.blue,
+              onPressed: null,
+              icon: Icon(
+                Icons.my_location,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return file == null ? buildSplashScreen() : buildUploadForm();
+    return file == null ? splashScreen() : uploadForm();
   }
 }
