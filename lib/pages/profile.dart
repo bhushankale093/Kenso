@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kenso/models/AppUser.dart';
+import 'package:kenso/pages/edit_profile.dart';
 import 'package:kenso/pages/home.dart';
 import 'package:kenso/reusable_widgets/header.dart';
 import 'package:kenso/reusable_widgets/progress.dart';
@@ -13,6 +14,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  final String currentUserId = currentUser?.id;
   Column buildCountColumn(String label, int count) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -37,8 +39,57 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  editProfile() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditProfile(currentUserId: currentUserId)));
+  }
+
+  Container buildButton({String text, Function function}) {
+    return Container(
+      padding: EdgeInsets.only(top: 2.0),
+      child: FlatButton(
+        onPressed: function,
+        child: Container(
+          width: 250.0,
+          height: 27.0,
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            border: Border.all(
+              color: Colors.blue,
+            ),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+        ),
+      ),
+    );
+  }
+
   profileButton() {
-    return Text("prof button");
+    // viewing your own profile - should show edit profile button
+    bool isProfileOwner = currentUserId == widget.profileId;
+    if (isProfileOwner) {
+      return GestureDetector(
+        onTap: editProfile,
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+          child: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Icon(Icons.edit),
+          ),
+        ),
+      );
+    }
   }
 
   profileHeader() {
