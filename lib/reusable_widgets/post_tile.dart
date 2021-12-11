@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kenso/pages/post_screen.dart';
 import 'package:kenso/reusable_widgets/custom_image.dart';
 import 'package:kenso/reusable_widgets/post.dart';
 
@@ -8,7 +9,15 @@ class PostTile extends StatelessWidget {
   PostTile(this.post);
 
   showPost(context) {
-    Navigator.push(context, null);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostScreen(
+          postId: post.postId,
+          userId: post.ownerId,
+        ),
+      ),
+    );
   }
 
   @override
