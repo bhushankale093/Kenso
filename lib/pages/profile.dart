@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kenso/models/AppUser.dart';
 import 'package:kenso/pages/edit_profile.dart';
 import 'package:kenso/pages/home.dart';
 import 'package:kenso/reusable_widgets/header.dart';
+import 'package:kenso/reusable_widgets/post.dart';
 import 'package:kenso/reusable_widgets/progress.dart';
+import 'package:kenso/reusable_widgets/post_tile.dart';
 
 class Profile extends StatefulWidget {
   final String profileId;
@@ -15,6 +18,31 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final String currentUserId = currentUser?.id;
+  bool isLoading = false;
+  int postCount = 0;
+  List<Post> posts = [];
+  @override
+  void initState() {
+    super.initState();
+    getProfilePosts();
+  }
+
+  getProfilePosts() async {
+    setState(() {
+      isLoading = true;
+    });
+    QuerySnapshot snapshot = await postsRef
+        .doc(widget.profileId)
+        .collection('userPosts')
+        .orderBy('timestamp', descending: true)
+        .get();
+    setState(() {
+      isLoading = false;
+      postCount = snapshot.docs.length;
+      posts = snapshot.docs.map((doc) => Post.fromDocument(doc)).toList();
+    });
+  }
+
   Column buildCountColumn(String label, int count) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -156,7 +184,7 @@ class _ProfileState extends State<Profile> {
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                buildCountColumn("posts", 0),
+                                buildCountColumn("posts", postCount),
                                 buildCountColumn("followers", 0),
                                 buildCountColumn("following", 0),
                               ],
@@ -186,6 +214,50 @@ class _ProfileState extends State<Profile> {
         });
   }
 
+  profilePosts() {
+    if (isLoading) {
+      return circularProgress();
+    } else if (posts.isEmpty) {
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // SvgPicture.asset('assets/images/no_content.svg', height: 260.0),
+            Padding(
+              padding: EdgeInsets.only(top: 20.0),
+              child: Center(
+                child: Text(
+                  "No Posts",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 25.0,
+                    // fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      List<GridTile> gridTiles = [];
+      posts.forEach((post) {
+        gridTiles.add(GridTile(child: PostTile(post)));
+      });
+      return Container(
+          padding: EdgeInsets.all(10.0),
+          child: GridView.count(
+            crossAxisCount: 4,
+            childAspectRatio: 1.0,
+            mainAxisSpacing: 1.5,
+            crossAxisSpacing: 1.5,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: gridTiles,
+          ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,6 +265,10 @@ class _ProfileState extends State<Profile> {
       body: ListView(
         children: <Widget>[
           profileHeader(),
+          Divider(
+            height: 0.0,
+          ),
+          profilePosts(),
         ],
       ),
     );
