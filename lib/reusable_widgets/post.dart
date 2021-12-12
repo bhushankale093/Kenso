@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kenso/models/AppUser.dart';
+import 'package:kenso/pages/comments.dart';
 import 'package:kenso/pages/home.dart';
 import 'package:kenso/reusable_widgets/custom_image.dart';
 import 'package:kenso/reusable_widgets/progress.dart';
@@ -73,7 +74,6 @@ class _PostState extends State<Post> {
   final String location;
   final String description;
   final String mediaUrl;
-  bool showHeart = false;
   bool isLiked;
   int likeCount;
   Map likes;
@@ -151,7 +151,6 @@ class _PostState extends State<Post> {
         likeCount += 1;
         isLiked = true;
         likes[currentUserId] = true;
-        showHeart = true;
       });
     }
   }
@@ -185,7 +184,12 @@ class _PostState extends State<Post> {
             ),
             Padding(padding: EdgeInsets.only(right: 20.0)),
             GestureDetector(
-              onTap: null,
+              onTap: showComments(
+                context,
+                postId: postId,
+                ownerId: ownerId,
+                mediaUrl: mediaUrl,
+              ),
               child: Icon(
                 Icons.chat,
                 size: 28.0,
@@ -235,5 +239,16 @@ class _PostState extends State<Post> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[buildPostHeader(), postImage(), postFooter()],
     );
+  }
+
+  showComments(BuildContext context,
+      {String postId, String ownerId, String mediaUrl}) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return Comments(
+        postId: postId,
+        postOwnerId: ownerId,
+        postMediaUrl: mediaUrl,
+      );
+    }));
   }
 }
