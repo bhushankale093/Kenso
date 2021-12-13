@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kenso/pages/home.dart';
 import 'package:kenso/reusable_widgets/header.dart';
@@ -22,7 +21,7 @@ class PostScreen extends StatelessWidget {
         Post post = Post.fromDocument(snapshot.data);
         return Center(
           child: Scaffold(
-            appBar: header(context, titleText: ''),
+            appBar: header(context, titleText: post.description),
             body: ListView(
               children: <Widget>[
                 Container(

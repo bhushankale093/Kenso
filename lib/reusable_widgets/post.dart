@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:animator/animator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kenso/models/AppUser.dart';
+import 'package:kenso/pages/activityFeed.dart';
 import 'package:kenso/pages/comments.dart';
 import 'package:kenso/pages/home.dart';
 import 'package:kenso/reusable_widgets/custom_image.dart';
@@ -74,6 +78,7 @@ class _PostState extends State<Post> {
   final String location;
   final String description;
   final String mediaUrl;
+  bool showHeart = false;
   bool isLiked;
   int likeCount;
   Map likes;
@@ -106,9 +111,9 @@ class _PostState extends State<Post> {
             backgroundColor: Colors.grey,
           ),
           title: GestureDetector(
-            onTap: null,
+            onTap: () => showProfile(context, profileId: user.id),
             child: Text(
-              user?.username,
+              user?.username ?? '',
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -118,13 +123,68 @@ class _PostState extends State<Post> {
           subtitle: Text(location),
           trailing: isPostOwner
               ? IconButton(
-                  onPressed: () => null,
+                  onPressed: () => handleDeletePost(context),
                   icon: Icon(Icons.more_vert),
                 )
               : Text(''),
         );
       },
     );
+  }
+
+  handleDeletePost(BuildContext parentContext) {
+    return showDialog(
+        context: parentContext,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text("Remove this post?"),
+            children: <Widget>[
+              SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    deletePost();
+                  },
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  )),
+              SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel')),
+            ],
+          );
+        });
+  }
+
+  // Note: To delete post, ownerId and currentUserId must be equal, so they can be used interchangeably
+  deletePost() async {
+    // delete post itself
+    postsRef.doc(ownerId).collection('userPosts').doc(postId).get().then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    // delete uploaded image for thep ost
+    storageRef.child("post_$postId.jpg").delete();
+    // then delete all activity feed notifications
+    QuerySnapshot activityFeedSnapshot = await activityFeedRef
+        .doc(ownerId)
+        .collection("feedItems")
+        .where('postId', isEqualTo: postId)
+        .get();
+    activityFeedSnapshot.docs.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    // then delete all comments
+    QuerySnapshot commentsSnapshot =
+        await commentsRef.doc(postId).collection('comments').get();
+    commentsSnapshot.docs.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
   }
 
   handleLikePost() {
@@ -136,6 +196,7 @@ class _PostState extends State<Post> {
           .collection('userPosts')
           .doc(postId)
           .update({'likes.$currentUserId': false});
+      removeLikeFromActivityFeed();
       setState(() {
         likeCount -= 1;
         isLiked = false;
@@ -147,27 +208,82 @@ class _PostState extends State<Post> {
           .collection('userPosts')
           .doc(postId)
           .update({'likes.$currentUserId': true});
+      addLikeToActivityFeed();
       setState(() {
         likeCount += 1;
         isLiked = true;
         likes[currentUserId] = true;
+        showHeart = true;
+      });
+      Timer(Duration(milliseconds: 500), () {
+        setState(() {
+          showHeart = false;
+        });
       });
     }
   }
 
-  postImage() {
+  addLikeToActivityFeed() {
+    // add a notification to the postOwner's activity feed only if comment made by OTHER user (to avoid getting notification for our own like)
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef.doc(ownerId).collection("feedItems").doc(postId).set({
+        "type": "like",
+        "username": currentUser.username,
+        "userId": currentUser.id,
+        "userProfileImg": currentUser.photoUrl,
+        "postId": postId,
+        "mediaUrl": mediaUrl,
+        "timestamp": timestamp,
+      });
+    }
+  }
+
+  removeLikeFromActivityFeed() {
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef
+          .doc(ownerId)
+          .collection("feedItems")
+          .doc(postId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    }
+  }
+
+  buildPostImage() {
     return GestureDetector(
       onLongPress: handleLikePost,
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
           mediaUrl != null ? cachedNetworkImage(mediaUrl) : null,
+          showHeart
+              ? Animator(
+                  duration: Duration(milliseconds: 300),
+                  tween: Tween(begin: 0.8, end: 1.4),
+                  curve: Curves.elasticOut,
+                  cycles: 0,
+                  builder: (context, anim, child) => Transform.scale(
+                    scale: anim.value,
+                    child: Icon(
+                      Icons.favorite,
+                      size: 80.0,
+                      color: Colors.red,
+                    ),
+                  ),
+                )
+              : Text(""),
         ],
       ),
     );
   }
 
-  postFooter() {
+  buildPostFooter() {
     return Column(
       children: <Widget>[
         Row(
@@ -184,7 +300,7 @@ class _PostState extends State<Post> {
             ),
             Padding(padding: EdgeInsets.only(right: 20.0)),
             GestureDetector(
-              onTap: showComments(
+              onTap: () => showComments(
                 context,
                 postId: postId,
                 ownerId: ownerId,
@@ -235,20 +351,25 @@ class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[buildPostHeader(), postImage(), postFooter()],
+      children: <Widget>[
+        buildPostHeader(),
+        buildPostImage(),
+        buildPostFooter()
+      ],
     );
   }
+}
 
-  showComments(BuildContext context,
-      {String postId, String ownerId, String mediaUrl}) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return Comments(
-        postId: postId,
-        postOwnerId: ownerId,
-        postMediaUrl: mediaUrl,
-      );
-    }));
-  }
+showComments(BuildContext context,
+    {String postId, String ownerId, String mediaUrl}) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return Comments(
+      postId: postId,
+      postOwnerId: ownerId,
+      postMediaUrl: mediaUrl,
+    );
+  }));
 }

@@ -77,15 +77,15 @@ class _SearchState extends State<Search> {
     );
   }
 
-  searchResults() {
-    return FutureBuilder<QuerySnapshot>(
+  buildSearchResults() {
+    return FutureBuilder(
       future: searchResultsFuture,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return circularProgress();
         }
         List<UserResult> searchResults = [];
-        snapshot.data.docs.forEach((doc) {
+        snapshot.data.documents.forEach((doc) {
           AppUser user = AppUser.fromDocument(doc);
           UserResult searchResult = UserResult(user);
           searchResults.add(searchResult);
@@ -102,7 +102,8 @@ class _SearchState extends State<Search> {
     return Scaffold(
       backgroundColor: Colors.orange,
       appBar: buildSearchField(),
-      body: searchResultsFuture == null ? buildNoContent() : searchResults(),
+      body:
+          searchResultsFuture == null ? buildNoContent() : buildSearchResults(),
     );
   }
 }
@@ -123,11 +124,13 @@ class UserResult extends StatelessWidget {
         child: Column(
           children: <Widget>[
             GestureDetector(
-              onTap: null,
+              onTap: () => showProfile(context, profileId: user.id),
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.grey,
-                  backgroundImage: AssetImage('assets/images/defaultUser.png'),
+                  backgroundImage: user?.photoUrl != null
+                      ? NetworkImage(user.photoUrl)
+                      : AssetImage('assets/images/defaultUser.png'),
                 ),
                 title: Text(
                   user?.displayName ?? '',

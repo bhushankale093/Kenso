@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:kenso/models/AppUser.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:kenso/pages/home.dart';
 import 'package:kenso/reusable_widgets/progress.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as Im;
+import 'package:uuid/uuid.dart';
 
 class Upload extends StatefulWidget {
   final AppUser currentUser;
@@ -38,7 +38,7 @@ class _UploadState extends State<Upload>
     });
   }
 
-  chooseFromGallery() async {
+  handleChooseFromGallery() async {
     Navigator.pop(context);
     File file = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -57,7 +57,7 @@ class _UploadState extends State<Upload>
                 child: Text("Photo with Camera"), onPressed: handleTakePhoto),
             SimpleDialogOption(
                 child: Text("Image from Gallery"),
-                onPressed: chooseFromGallery),
+                onPressed: handleChooseFromGallery),
             SimpleDialogOption(
               child: Text("Cancel"),
               onPressed: () => Navigator.pop(context),
@@ -68,7 +68,7 @@ class _UploadState extends State<Upload>
     );
   }
 
-  Container splashScreen() {
+  Container buildSplashScreen() {
     return Container(
       color: Colors.orange,
       alignment: Alignment.center,
@@ -161,7 +161,7 @@ class _UploadState extends State<Upload>
     });
   }
 
-  Scaffold uploadForm() {
+  Scaffold buildUploadForm() {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple,
@@ -229,7 +229,7 @@ class _UploadState extends State<Upload>
               child: TextField(
                 controller: captionController,
                 decoration: InputDecoration(
-                  hintText: "Caption...",
+                  hintText: "Write a caption...",
                   border: InputBorder.none,
                 ),
               ),
@@ -247,7 +247,7 @@ class _UploadState extends State<Upload>
               child: TextField(
                 controller: locationController,
                 decoration: InputDecoration(
-                  hintText: "Your Pic Location?",
+                  hintText: "Where was this photo taken?",
                   border: InputBorder.none,
                 ),
               ),
@@ -292,8 +292,11 @@ class _UploadState extends State<Upload>
   }
 
   bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
-    return file == null ? splashScreen() : uploadForm();
+    super.build(context);
+
+    return file == null ? buildSplashScreen() : buildUploadForm();
   }
 }

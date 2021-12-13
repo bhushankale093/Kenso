@@ -66,13 +66,26 @@ class CommentsState extends State<Comments> {
       "avatarUrl": currentUser.photoUrl,
       "userId": currentUser.id,
     });
+    bool isNotPostOwner = postOwnerId != currentUser.id;
+    if (isNotPostOwner) {
+      activityFeedRef.doc(postOwnerId).collection('feedItems').add({
+        "type": "comment",
+        "commentData": commentController.text,
+        "timestamp": timestamp,
+        "postId": postId,
+        "userId": currentUser.id,
+        "username": currentUser.username,
+        "userProfileImg": currentUser.photoUrl,
+        "mediaUrl": postMediaUrl,
+      });
+    }
     commentController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context),
+      appBar: header(context, titleText: "Comments"),
       body: Column(
         children: <Widget>[
           Expanded(child: buildComments()),
@@ -80,7 +93,7 @@ class CommentsState extends State<Comments> {
           ListTile(
             title: TextFormField(
               controller: commentController,
-              decoration: InputDecoration(labelText: "Put a comment"),
+              decoration: InputDecoration(labelText: "Write a comment..."),
             ),
             trailing: OutlineButton(
               onPressed: addComment,

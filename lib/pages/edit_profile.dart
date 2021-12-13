@@ -41,7 +41,7 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
-  Column displayNameField() {
+  Column buildDisplayNameField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -62,7 +62,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Column bioField() {
+  Column buildBioField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -156,8 +156,8 @@ class _EditProfileState extends State<EditProfile> {
                         padding: EdgeInsets.all(16.0),
                         child: Column(
                           children: <Widget>[
-                            displayNameField(),
-                            bioField(),
+                            buildDisplayNameField(),
+                            buildBioField(),
                           ],
                         ),
                       ),

@@ -24,7 +24,6 @@ class AppUser {
       username: doc['username'],
       displayName: doc['displayName'],
       bio: doc['bio'],
-      photoUrl: doc['photoUrl'],
     );
   }
 }
