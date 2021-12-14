@@ -295,19 +295,30 @@ class _ProfileState extends State<Profile> {
                       children: <Widget>[
                         Expanded(
                           flex: 1,
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  buildCountColumn("posts", postCount),
-                                  buildCountColumn("followers", followerCount),
-                                  buildCountColumn("following", followingCount),
-                                ],
-                              ),
-                            ],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.lightBlueAccent,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      buildCountColumn("posts", postCount),
+                                      buildCountColumn(
+                                          "followers", followerCount),
+                                      buildCountColumn(
+                                          "following", followingCount),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

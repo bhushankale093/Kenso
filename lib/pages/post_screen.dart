@@ -25,6 +25,7 @@ class PostScreen extends StatelessWidget {
             body: ListView(
               children: <Widget>[
                 Container(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: post,
                 )
               ],

@@ -344,6 +344,9 @@ class _PostState extends State<Post> {
             Expanded(child: Text(description ?? ''))
           ],
         ),
+        SizedBox(
+          height: 20.0,
+        )
       ],
     );
   }
@@ -352,13 +355,21 @@ class _PostState extends State<Post> {
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        buildPostHeader(),
-        buildPostImage(),
-        buildPostFooter()
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.blue.shade600),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            buildPostHeader(),
+            buildPostImage(),
+            buildPostFooter(),
+          ],
+        ),
+      ),
     );
   }
 }

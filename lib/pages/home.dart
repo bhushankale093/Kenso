@@ -129,7 +129,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          Timeline(),
+          Timeline(currentUser: currentUser),
           ActivityFeed(),
           Upload(currentUser: currentUser),
           Search(),
@@ -140,6 +140,8 @@ class _HomeState extends State<Home> {
         physics: NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: CircleBottomNavigation(
+          circleSize: 40.0,
+          arcHeight: 30,
           initialSelection: pageIndex,
           onTabChangedListener: onTap,
           barBackgroundColor: Colors.white,
