@@ -1,16 +1,33 @@
-# kenso
+# **Kenso - Social Media App**
 
-A new Flutter project.
+Kenso is a fully functional social media app with multiple features built with flutter and dart.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+- Authenticate using google accounts
+- Custom photo feed
+- Post photo posts from camera or gallery
+  - Like posts
+  - Comment on posts
+    - View all comments on a post
+- Search for users
+- Deleting Posts
+- Profile Pages
+  - Change username
+  - Follow / Unfollow Users
+  - Add your own bio
+- Activity Feed showing recent likes / comments of your posts + new followers
+- Used Provider to manage state
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Screenshots
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+<p>
+<img src="Screenshots/3.png" width="300"/> <img src="Screenshots/6.png" width="300"/>
+<img src="Screenshots/2.png" width="300"> <img src="Screenshots/1.png" width="300">
+<img src="Screenshots/7.png" width="300"> <img src="Screenshots/5.png" width="300">
+<img src="Screenshots/4.png" width="300"> 
+</p>

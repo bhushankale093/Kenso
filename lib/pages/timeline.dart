@@ -66,7 +66,14 @@ class _TimelineState extends State<Timeline> {
     if (posts == null) {
       return circularProgress();
     } else if (posts.isEmpty) {
-      return Text('None');
+      return Center(
+          child: Text(
+        'No Posts in Timeline',
+        style: TextStyle(
+            color: Colors.redAccent,
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold),
+      ));
     } else {
       return ListView(children: posts);
     }

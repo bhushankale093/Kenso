@@ -147,14 +147,17 @@ class _ProfileState extends State<Profile> {
     // viewing your own profile - should show edit profile button
     bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
-      return GestureDetector(
-        onTap: editProfile,
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0), color: Colors.white),
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Icon(Icons.edit),
+      return Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: GestureDetector(
+          onTap: editProfile,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Icon(Icons.edit),
+            ),
           ),
         ),
       );
@@ -260,7 +263,7 @@ class _ProfileState extends State<Profile> {
                 child: Column(
                   children: <Widget>[
                     CircleAvatar(
-                      radius: 40.0,
+                      radius: 35.0,
                       backgroundColor: Colors.grey,
                       backgroundImage: user?.photoUrl != null
                           ? NetworkImage(user?.photoUrl)

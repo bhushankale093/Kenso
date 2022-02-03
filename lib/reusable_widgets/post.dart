@@ -359,8 +359,7 @@ class _PostState extends State<Post> {
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.blue.shade600),
+            borderRadius: BorderRadius.circular(10.0), color: Colors.white70),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
