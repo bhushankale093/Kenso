@@ -21,6 +21,10 @@ Kenso is a fully functional social media app with multiple features built with f
 - Activity Feed showing recent likes / comments of your posts + new followers
 - Used Provider to manage state
 
+## Demo
+
+<p><img src="Screenshots/demo.gif" width="300"> </p>
+
 ## Screenshots
 
 ---
